@@ -24,6 +24,9 @@ public class Employee {
 	@Column(name="emp_post")
 	private String empPost;
 	
+	@Column(name="is_deleted",columnDefinition = "boolean default false")
+	private boolean isDeleted;
+	
 	
 	@OneToOne
 	private Asset asset;

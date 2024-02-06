@@ -7,6 +7,8 @@ import com.omkar.assetmanagement.dto.EmployeeDto;
 public interface EmployeeService {
 
 	List<EmployeeDto> getAllEmployees();
+	
+//	boolean isDeleted(long empId);
 
 	EmployeeDto getEmployeeById(Long empId);
 

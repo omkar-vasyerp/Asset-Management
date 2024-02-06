@@ -35,19 +35,31 @@ public class EmployeeController {
 	}
 	
 	@GetMapping("/get")
-	public ResponseEntity<EmployeeDto> getEmployeeById(@RequestParam Long empId){
-		return ResponseEntity.ok(employeeService.getEmployeeById(empId));
+	public ResponseEntity<?> getEmployeeById(@RequestParam Long empId){
+		EmployeeDto employeeDto = employeeService.getEmployeeById(empId);
+		if (employeeDto==null) {
+			return ResponseEntity.ok("User Not Found");
+		}
+		return ResponseEntity.ok(employeeDto);
 	}
 	
 	@DeleteMapping("/delete")
 	public ResponseEntity<String> deleteEmployeeById(@RequestParam Long empId){
+		EmployeeDto employeeDto = employeeService.getEmployeeById(empId);
+		if (employeeDto!=null) {
 		employeeService.deleteEmployeeById(empId);
 		return ResponseEntity.ok("Delete Success");
+		}
+		return ResponseEntity.ok("User Not Found");
 	}
 	
 	@PostMapping("/assign")
 	public ResponseEntity<String> assignAsset(@RequestParam Long empId,@RequestParam Long assetId){
+		EmployeeDto employeeDto = employeeService.getEmployeeById(empId);
+		if (employeeDto!=null) {
 		employeeService.assignAsset(empId, assetId);
 		return ResponseEntity.ok("Assign Success");
+		}else {
+		return ResponseEntity.ok("User Not Found");}
 	}
 }

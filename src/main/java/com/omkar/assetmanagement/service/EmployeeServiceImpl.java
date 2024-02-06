@@ -15,19 +15,24 @@ import com.omkar.assetmanagement.repository.EmployeeRepository;
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
 
-	
-
 	@Autowired
 	private AssetRepository assetRepository;
 
 	@Autowired
 	private EmployeeRepository employeeRepository;
-	
+
 	@Override
 	public List<EmployeeDto> getAllEmployees() {
-		List<Employee> employees= employeeRepository.findAll();
+		List<Employee> employees = employeeRepository.findAll();
+		List<Employee> newEmployees = new ArrayList<Employee>();
 		List<EmployeeDto> employeeDtos = new ArrayList<EmployeeDto>();
 		for (Employee employee : employees) {
+			if (employee.isDeleted() != true) {
+				newEmployees.add(employee);
+			}
+		}
+
+		for (Employee employee : newEmployees) {
 			EmployeeDto employeeDto = new EmployeeDto();
 			employeeDto.setEmpId(employee.getEmpId());
 			employeeDto.setEmpName(employee.getEmpName());
@@ -40,20 +45,32 @@ public class EmployeeServiceImpl implements EmployeeService {
 
 	@Override
 	public EmployeeDto getEmployeeById(Long empId) {
-		Employee employee=employeeRepository.findById(empId).get();
+		if (employeeRepository.existsById(empId)) {
+		Employee employee = employeeRepository.findById(empId).get();
+		if (employee.isDeleted()) {
+			return null;
+		}
 		EmployeeDto employeeDto = new EmployeeDto();
 		employeeDto.setEmpId(employee.getEmpId());
 		employeeDto.setEmpName(employee.getEmpName());
 		employeeDto.setEmpPost(employee.getEmpPost());
 		employeeDto.setAsset(employee.getAsset());
 		return employeeDto;
+		}
+		return null;
 	}
 
 	@Override
 	public boolean deleteEmployeeById(Long empId) {
-		employeeRepository.deleteById(empId);
-		return true;
+//		employeeRepository.deleteById(empId);
+		if (employeeRepository.existsById(empId)) {
+			Employee employee = employeeRepository.findById(empId).get();
+			employee.setDeleted(true);
+			employeeRepository.save(employee);
+		}
+		return false;
 	}
+
 	@Override
 	public boolean addEmployee(EmployeeDto employeeDto) {
 		Employee employee = new Employee();
@@ -68,10 +85,13 @@ public class EmployeeServiceImpl implements EmployeeService {
 	public boolean assignAsset(Long empId, Long assetId) {
 		Employee existingEmployee = employeeRepository.findById(empId).get();
 		Asset asset = assetRepository.findById(assetId).get();
-		if(existingEmployee!= null) {
-			existingEmployee.setAsset(asset);
-			employeeRepository.save(existingEmployee);
-			return true;	
+
+		if (existingEmployee != null) {
+			if (existingEmployee.isDeleted() != true) {
+				existingEmployee.setAsset(asset);
+				employeeRepository.save(existingEmployee);
+				return true;
+			}
 		}
 		return false;
 	}
