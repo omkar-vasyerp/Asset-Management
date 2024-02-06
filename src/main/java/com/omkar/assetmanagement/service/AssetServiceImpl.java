@@ -14,9 +14,12 @@ import com.omkar.assetmanagement.repository.AssetRepository;
 @Service
 public class AssetServiceImpl implements AssetService {
 
-	@Autowired
+	
 	private AssetRepository assetRepository;
-
+	
+	public AssetServiceImpl(AssetRepository assetRepo) {
+		assetRepository=assetRepo;		
+	}
 
 	@Override
 	public boolean deleteAssetById(Long assetId) {

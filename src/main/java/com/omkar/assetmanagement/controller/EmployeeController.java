@@ -19,8 +19,11 @@ import com.omkar.assetmanagement.service.EmployeeService;
 @RequestMapping("/api/employee")
 public class EmployeeController {
 
-	@Autowired
+
 	private EmployeeService employeeService;
+	public EmployeeController(EmployeeService employeeService) {
+		this.employeeService=employeeService;
+	}
 	
 	@GetMapping("/all")
 	public ResponseEntity<List<EmployeeDto>> getAllEmployees(){

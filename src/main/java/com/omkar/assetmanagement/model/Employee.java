@@ -27,7 +27,6 @@ public class Employee {
 	@Column(name="is_deleted",columnDefinition = "boolean default false")
 	private boolean isDeleted;
 	
-	
 	@OneToOne
 	private Asset asset;
 	

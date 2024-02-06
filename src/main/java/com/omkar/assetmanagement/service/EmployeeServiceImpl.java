@@ -3,7 +3,6 @@ package com.omkar.assetmanagement.service;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.omkar.assetmanagement.dto.EmployeeDto;
@@ -15,11 +14,15 @@ import com.omkar.assetmanagement.repository.EmployeeRepository;
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
 
-	@Autowired
 	private AssetRepository assetRepository;
-
-	@Autowired
 	private EmployeeRepository employeeRepository;
+
+
+	public EmployeeServiceImpl(AssetRepository assetRepo,EmployeeRepository employeeRepo) {
+		this.assetRepository = assetRepo;
+		this.employeeRepository=employeeRepo;
+	}
+
 
 	@Override
 	public List<EmployeeDto> getAllEmployees() {
@@ -46,16 +49,16 @@ public class EmployeeServiceImpl implements EmployeeService {
 	@Override
 	public EmployeeDto getEmployeeById(Long empId) {
 		if (employeeRepository.existsById(empId)) {
-		Employee employee = employeeRepository.findById(empId).get();
-		if (employee.isDeleted()) {
-			return null;
-		}
-		EmployeeDto employeeDto = new EmployeeDto();
-		employeeDto.setEmpId(employee.getEmpId());
-		employeeDto.setEmpName(employee.getEmpName());
-		employeeDto.setEmpPost(employee.getEmpPost());
-		employeeDto.setAsset(employee.getAsset());
-		return employeeDto;
+			Employee employee = employeeRepository.findById(empId).get();
+			if (employee.isDeleted()) {
+				return null;
+			}
+			EmployeeDto employeeDto = new EmployeeDto();
+			employeeDto.setEmpId(employee.getEmpId());
+			employeeDto.setEmpName(employee.getEmpName());
+			employeeDto.setEmpPost(employee.getEmpPost());
+			employeeDto.setAsset(employee.getAsset());
+			return employeeDto;
 		}
 		return null;
 	}

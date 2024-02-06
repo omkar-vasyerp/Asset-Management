@@ -2,13 +2,14 @@ package com.omkar.assetmanagement.service;
 
 import java.util.List;
 
+import org.springframework.stereotype.Component;
+
 import com.omkar.assetmanagement.dto.EmployeeDto;
 
+@Component
 public interface EmployeeService {
 
 	List<EmployeeDto> getAllEmployees();
-	
-//	boolean isDeleted(long empId);
 
 	EmployeeDto getEmployeeById(Long empId);
 
