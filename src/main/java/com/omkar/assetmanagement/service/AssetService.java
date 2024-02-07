@@ -2,7 +2,9 @@ package com.omkar.assetmanagement.service;
 
 import java.util.List;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.omkar.assetmanagement.dto.AssetDto;
 
@@ -16,4 +18,12 @@ public interface AssetService {
 	AssetDto getAssetById(Long assetId);
 
 	boolean addAsset(AssetDto assetDto);
+	
+	String uploadFile(MultipartFile file);
+//	String uploadtxts(MultipartFile file);
+	
+//	ResponseEntity<Object> downloadFile(String name);
+
+	
+	ResponseEntity<Object> downloadFile(String name);
 }
