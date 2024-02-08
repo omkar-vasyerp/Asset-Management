@@ -20,10 +20,6 @@ public interface AssetService {
 	boolean addAsset(AssetDto assetDto);
 	
 	String uploadFile(MultipartFile file);
-//	String uploadtxts(MultipartFile file);
-	
-//	ResponseEntity<Object> downloadFile(String name);
-
 	
 	ResponseEntity<Object> downloadFile(String name);
 }

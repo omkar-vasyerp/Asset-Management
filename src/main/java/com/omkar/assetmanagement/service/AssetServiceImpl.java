@@ -18,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.omkar.assetmanagement.dto.AssetDto;
+import com.omkar.assetmanagement.exception.AssetNotFoundException;
 import com.omkar.assetmanagement.model.Asset;
 import com.omkar.assetmanagement.repository.AssetRepository;
 
@@ -32,7 +33,12 @@ public class AssetServiceImpl implements AssetService {
 
 	@Override
 	public boolean deleteAssetById(Long assetId) {
-		assetRepository.deleteById(assetId);
+		if(assetRepository.existsById(assetId)) {	
+			assetRepository.deleteById(assetId);
+		}
+		else {
+			throw new AssetNotFoundException("Asset Not Found With Id: "+assetId);
+		}
 		return true;
 	}
 
@@ -49,6 +55,7 @@ public class AssetServiceImpl implements AssetService {
 	public List<AssetDto> getallAsset() {
 		List<Asset> assets = assetRepository.findAll();
 		List<AssetDto> assetDtos = new ArrayList<AssetDto>();
+		
 		for (Asset asset : assets) {
 			AssetDto assetDto = new AssetDto();
 			assetDto.setAssetId(asset.getAssetId());
@@ -61,7 +68,7 @@ public class AssetServiceImpl implements AssetService {
 
 	@Override
 	public AssetDto getAssetById(Long assetId) {
-		Asset asset = assetRepository.findById(assetId).get();
+		Asset asset = assetRepository.findById(assetId).orElseThrow(()->new AssetNotFoundException("Asset Not Found With Id: "+assetId));
 		AssetDto assetDto = new AssetDto();
 		assetDto.setAssetId(asset.getAssetId());
 		assetDto.setAssetModel(asset.getAssetModel());

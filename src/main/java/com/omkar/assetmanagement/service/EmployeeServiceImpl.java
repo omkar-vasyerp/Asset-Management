@@ -6,6 +6,8 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.omkar.assetmanagement.dto.EmployeeDto;
+import com.omkar.assetmanagement.exception.AssetNotFoundException;
+import com.omkar.assetmanagement.exception.EmployeeNotFoundException;
 import com.omkar.assetmanagement.model.Asset;
 import com.omkar.assetmanagement.model.Employee;
 import com.omkar.assetmanagement.repository.AssetRepository;
@@ -17,12 +19,10 @@ public class EmployeeServiceImpl implements EmployeeService {
 	private AssetRepository assetRepository;
 	private EmployeeRepository employeeRepository;
 
-
-	public EmployeeServiceImpl(AssetRepository assetRepo,EmployeeRepository employeeRepo) {
+	public EmployeeServiceImpl(AssetRepository assetRepo, EmployeeRepository employeeRepo) {
 		this.assetRepository = assetRepo;
-		this.employeeRepository=employeeRepo;
+		this.employeeRepository = employeeRepo;
 	}
-
 
 	@Override
 	public List<EmployeeDto> getAllEmployees() {
@@ -48,26 +48,26 @@ public class EmployeeServiceImpl implements EmployeeService {
 
 	@Override
 	public EmployeeDto getEmployeeById(Long empId) {
-		if (employeeRepository.existsById(empId)) {
-			Employee employee = employeeRepository.findById(empId).get();
-			if (employee.isDeleted()) {
-				return null;
-			}
-			EmployeeDto employeeDto = new EmployeeDto();
-			employeeDto.setEmpId(employee.getEmpId());
-			employeeDto.setEmpName(employee.getEmpName());
-			employeeDto.setEmpPost(employee.getEmpPost());
-			employeeDto.setAsset(employee.getAsset());
-			return employeeDto;
+
+		Employee employee = employeeRepository.findById(empId)
+				.orElseThrow(() -> new EmployeeNotFoundException("Employee not found with id" + empId));
+		if (employee.isDeleted()) {
+			return null;
 		}
-		return null;
+		EmployeeDto employeeDto = new EmployeeDto();
+		employeeDto.setEmpId(employee.getEmpId());
+		employeeDto.setEmpName(employee.getEmpName());
+		employeeDto.setEmpPost(employee.getEmpPost());
+		employeeDto.setAsset(employee.getAsset());
+		return employeeDto;
+
 	}
 
 	@Override
 	public boolean deleteEmployeeById(Long empId) {
 //		employeeRepository.deleteById(empId);
 		if (employeeRepository.existsById(empId)) {
-			Employee employee = employeeRepository.findById(empId).get();
+			Employee employee = employeeRepository.findById(empId).orElseThrow(()->new EmployeeNotFoundException("Employee Not Found With Id: "+empId));
 			employee.setDeleted(true);
 			employeeRepository.save(employee);
 		}
@@ -86,8 +86,8 @@ public class EmployeeServiceImpl implements EmployeeService {
 
 	@Override
 	public boolean assignAsset(Long empId, Long assetId) {
-		Employee existingEmployee = employeeRepository.findById(empId).get();
-		Asset asset = assetRepository.findById(assetId).get();
+		Employee existingEmployee = employeeRepository.findById(empId).orElseThrow(()->new EmployeeNotFoundException("Employee Not Found With Id: "+empId));
+		Asset asset = assetRepository.findById(assetId).orElseThrow(()->new AssetNotFoundException("Asset Not Found With Id: "+assetId));
 
 		if (existingEmployee != null) {
 			if (existingEmployee.isDeleted() != true) {

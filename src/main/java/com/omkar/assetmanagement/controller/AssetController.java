@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.omkar.assetmanagement.dto.AssetDto;
+import com.omkar.assetmanagement.dto.ResponseDto;
+import com.omkar.assetmanagement.model.Asset;
 import com.omkar.assetmanagement.service.AssetService;
 
 @RestController
@@ -26,43 +28,39 @@ public class AssetController {
 	}
 	
 	@GetMapping("/all")
-	public ResponseEntity<List<AssetDto>> getAllAsset(){
-		return ResponseEntity.ok(assetService.getallAsset());
+	public ResponseDto getAllAsset(){
+		List<AssetDto> assetDtos =assetService.getallAsset();
+		return new ResponseDto(200, "Success", assetDtos);
 	}
 	
 	@PostMapping({"/add","/update"})
-	public ResponseEntity<String>  addAsset(@RequestBody AssetDto assetDto){
+	public ResponseDto  addAsset(@RequestBody AssetDto assetDto){
 		assetService.addAsset(assetDto); 
-		return ResponseEntity.ok("Success");
+		return new ResponseDto(200, "Success", "Add Successful");
 	}
 	
 	@DeleteMapping("/delete")
-	public ResponseEntity<String> deleteAsset(@RequestParam Long assetId){
+	public ResponseDto deleteAsset(@RequestParam Long assetId){
 		assetService.deleteAssetById(assetId);
-		return ResponseEntity.ok("Delete Success");
+		return new ResponseDto(200, "Success", "Delete Succesful");
 	}
 	
 	@GetMapping("/get")
-	public ResponseEntity<AssetDto> getAssetById(@RequestParam Long assetId){
-		return ResponseEntity.ok(assetService.getAssetById(assetId));
-		
+	public ResponseDto getAssetById(@RequestParam Long assetId){
+		AssetDto assetdto =assetService.getAssetById(assetId);
+		return new ResponseDto(200, "Success", assetdto);
 	}
-	
-//	@PostMapping("/upload")
-//	public ResponseEntity<String> uploadFile(@RequestParam MultipartFile file){
-//		
-//		return ResponseEntity.ok(assetService.uploadFile(file));
-//	}
-//	
-	@PostMapping("/upload")
-	public ResponseEntity<String> uploadFile(@RequestParam MultipartFile file){
 		
-		return ResponseEntity.ok(assetService.uploadFile(file));
+	@PostMapping("/upload")
+	public ResponseDto uploadFile(@RequestParam MultipartFile file){
+		assetService.uploadFile(file);
+		return new ResponseDto(200, "Success", "Upload Successful");
 	}
 	
 	@GetMapping("/download/{name}")
-	public ResponseEntity<Object> downloadFile(@PathVariable String name){
-		return assetService.downloadFile(name);
+	public ResponseDto downloadFile(@PathVariable String name){
+		Object obj= assetService.downloadFile(name);
+		return new ResponseDto(200, "Success", obj);
 	}
 	
 }

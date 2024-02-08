@@ -13,56 +13,59 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.omkar.assetmanagement.dto.EmployeeDto;
+import com.omkar.assetmanagement.dto.ResponseDto;
 import com.omkar.assetmanagement.service.EmployeeService;
 
 @RestController
 @RequestMapping("/api/employee")
 public class EmployeeController {
 
-
 	private EmployeeService employeeService;
+
 	public EmployeeController(EmployeeService employeeService) {
-		this.employeeService=employeeService;
+		this.employeeService = employeeService;
 	}
-	
+
 	@GetMapping("/all")
-	public ResponseEntity<List<EmployeeDto>> getAllEmployees(){
-		return ResponseEntity.ok(employeeService.getAllEmployees());
-		
+	public ResponseDto getAllEmployees() {
+		List<EmployeeDto> employeeDtos = employeeService.getAllEmployees();
+		return new ResponseDto(200, "Success", employeeDtos);
+
 	}
-	
-	@PostMapping({"/add","/update"})
-	public  ResponseEntity<String> addEmployee(@RequestBody EmployeeDto employeeDto){
+
+	@PostMapping({ "/add", "/update" })
+	public ResponseDto addEmployee(@RequestBody EmployeeDto employeeDto) {
 		employeeService.addEmployee(employeeDto);
-		return ResponseEntity.ok("Success");
+		return new ResponseDto(200, "Success", "Add Success");
 	}
-	
+
+//	@GetMapping("/get")
+//	public ResponseEntity<?> getEmployeeById(@RequestParam Long empId){
+//		EmployeeDto employeeDto = employeeService.getEmployeeById(empId);
+//		if (employeeDto==null) {
+//			return ResponseEntity.ok("User Not Found");
+//		}
+//		return ResponseEntity.ok(employeeDto);
+//	}
 	@GetMapping("/get")
-	public ResponseEntity<?> getEmployeeById(@RequestParam Long empId){
+	public ResponseDto getEmployeeById(@RequestParam Long empId) {
+
 		EmployeeDto employeeDto = employeeService.getEmployeeById(empId);
-		if (employeeDto==null) {
-			return ResponseEntity.ok("User Not Found");
-		}
-		return ResponseEntity.ok(employeeDto);
+
+		return new ResponseDto(200, "Success", employeeDto);
 	}
-	
+
 	@DeleteMapping("/delete")
-	public ResponseEntity<String> deleteEmployeeById(@RequestParam Long empId){
-		EmployeeDto employeeDto = employeeService.getEmployeeById(empId);
-		if (employeeDto!=null) {
+	public ResponseDto deleteEmployeeById(@RequestParam Long empId) {
+
 		employeeService.deleteEmployeeById(empId);
-		return ResponseEntity.ok("Delete Success");
-		}
-		return ResponseEntity.ok("User Not Found");
+		return new ResponseDto(200, "Success", "Delete Success");
 	}
-	
+
 	@PostMapping("/assign")
-	public ResponseEntity<String> assignAsset(@RequestParam Long empId,@RequestParam Long assetId){
-		EmployeeDto employeeDto = employeeService.getEmployeeById(empId);
-		if (employeeDto!=null) {
+	public ResponseDto assignAsset(@RequestParam Long empId, @RequestParam Long assetId) {
 		employeeService.assignAsset(empId, assetId);
-		return ResponseEntity.ok("Assign Success");
-		}else {
-		return ResponseEntity.ok("User Not Found");}
+		return new ResponseDto(200, "Success", "Assign Success");
+
 	}
 }
